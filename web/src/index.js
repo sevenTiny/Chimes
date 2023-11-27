@@ -1,13 +1,51 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import App from './App';
+import Home from './Pages/Home';
+import JsonTool from './Pages/JsonTool';
+import GenerateTool from './Pages/GenerateTool';
+import XuanXue from './Pages/XuanXue';
+import Links from './Pages/Links';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "/Home",
+        element: <Home />,
+      },
+      {
+        path: "/JsonTool",
+        element: <JsonTool />,
+      },
+      {
+        path: "/GenerateTool",
+        element: <GenerateTool />,
+      },
+      {
+        path: "/XuanXue",
+        element: <XuanXue />,
+      },
+      {
+        path: "/Links",
+        element: <Links />,
+      },
+    ],
+  },
+]);
+
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 
