@@ -144,6 +144,7 @@ const FieldExtraction = () => {
                                 keys.forEach(key => {
                                     extract(json, key);
                                 })
+                                
                                 setExtractValues(result);
                                 setOpt(result.join('\n'));
                             } catch (e) {
