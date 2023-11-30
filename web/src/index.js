@@ -9,7 +9,9 @@ import JsonTool from './Pages/JsonTool';
 import GenerateTool from './Pages/GenerateTool';
 import XuanXue from './Pages/XuanXue';
 import Links from './Pages/Links';
-import WebCrawler from './Pages/WebCrawler';
+import Diff from './Pages/Diff';
+import TimeLine from './Pages/TimeLine';
+
 
 const router = createBrowserRouter([
   {
@@ -33,8 +35,8 @@ const router = createBrowserRouter([
         element: <GenerateTool />,
       },
       {
-        path: "/WebCrawler",
-        element: <WebCrawler />,
+        path: "/Diff",
+        element: <Diff />,
       },
       {
         path: "/XuanXue",
@@ -43,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/Links",
         element: <Links />,
+      },
+      {
+        path: "/TimeLine",
+        element: <TimeLine />,
       }
     ],
   },

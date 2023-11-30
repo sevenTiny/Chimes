@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ToolOutlined, HomeOutlined, LinkOutlined, BuildOutlined, BulbOutlined, BugOutlined } from '@ant-design/icons';
+import { ToolOutlined, HomeOutlined, LinkOutlined, BuildOutlined, BulbOutlined, EyeOutlined, UserOutlined } from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu, theme, Image, Row, Col } from 'antd';
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
@@ -22,9 +22,9 @@ const menuItems = [
     icon: <BuildOutlined />,
   },
   {
-    label: 'Web爬虫',
-    key: '/WebCrawler',
-    icon: <BugOutlined />,
+    label: '对比工具',
+    key: '/Diff',
+    icon: <EyeOutlined />,
   },
   {
     label: '玄学',
@@ -32,8 +32,13 @@ const menuItems = [
     icon: <BulbOutlined />,
   },
   {
-    label: '快捷链接',
+    label: '常用链接',
     key: '/Links',
+    icon: <LinkOutlined />,
+  },
+  {
+    label: '关于',
+    key: '/TimeLine',
     icon: <LinkOutlined />,
   },
 ];
@@ -99,7 +104,7 @@ const App = () => {
         <Outlet />
       </Content>
 
-      <Footer style={{ textAlign: 'center', }}>
+      <Footer style={{ textAlign: 'center', height: 60, padding: 15 }}>
         Chimes ©2023 Created by 7tiny<br />
         <span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv"></span> 次</span>
       </Footer>
