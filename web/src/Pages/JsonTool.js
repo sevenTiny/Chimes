@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Tabs, Input, Flex, Space, Button, Card, message, Row, Col } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Tabs, Input, Flex, Space, Button, Card, message, Row, Col, Checkbox, Modal, Form, Popover, InputNumber } from 'antd';
 import { CopyButton } from '../Components/Buttons';
+import FormItem from 'antd/es/form/FormItem';
 
 const { TextArea } = Input;
 
@@ -112,7 +114,7 @@ const FieldExtraction = () => {
                     </Col>
                 </Row>
                 <Space gap="small" wrap align='center'>
-                    <label>待提取的Keys：</label>
+                    <label>JSON Key：</label>
                     <Input placeholder="请输入Key，多个逗号分隔" style={{ width: 200 }} onChange={e => { setKeys(e.target.value.trim().replace(' ', '').split(',')) }} />
                     <Button
                         type="primary"
@@ -144,7 +146,7 @@ const FieldExtraction = () => {
                                 keys.forEach(key => {
                                     extract(json, key);
                                 })
-                                
+
                                 setExtractValues(result);
                                 setOpt(result.join('\n'));
                             } catch (e) {
@@ -190,6 +192,204 @@ const FieldExtraction = () => {
     )
 }
 
+const JsonEditor = () => {
+    const [ipt, setIpt] = useState('');
+    const [param1, setParam1] = useState('')
+    const [param2, setParam2] = useState('')
+    const [repeat, setRepeat] = useState(1)
+    const [opt, setOpt] = useState('');
+    const [jsonFormal, setJsonFormal] = useState(false);
+    const [arrayToJsonModal, setArrayToJsonModal] = useState(false);
+    const { TextArea } = Input;
+    const [form] = Form.useForm();
+    return (
+        <>
+            <Flex vertical='vertical' gap='middle'>
+                <Row gutter={16}>
+                    <Col span={10}>
+                        <TextArea rows={30} placeholder="原始JSON，编辑器将对该JSON进行编辑。如果未输入原始JSON，将会依据数据自动创造JSON。" onChange={e => { setIpt(e.target.value) }} />
+                    </Col>
+                    <Col span={14}>
+                        <TextArea rows={30} placeholder="输出结果" value={opt} />
+                    </Col>
+                </Row>
+                <Flex gap="small" wrap align='center'>
+                    <label>JSON Key：</label>
+                    <Checkbox
+                        onChange={e => {
+                            setJsonFormal(e.target.checked);
+                            if (opt !== '') {
+                                if (e.target.checked)
+                                    setOpt(JSON.stringify(JSON.parse(opt), null, '\t'));
+                                else
+                                    setOpt(JSON.stringify(JSON.parse(opt)));
+                            }
+                        }}>格式化</Checkbox>
+                    <Button
+                        type="primary"
+                        onClick={() => { setArrayToJsonModal(true) }}>
+                        数据写入JSON
+                    </Button>
+                    <CopyButton onGetText={() => opt} />
+                </Flex>
+            </Flex>
+
+            <Modal
+                title="数据写入JSON"
+                open={arrayToJsonModal}
+                onOk={() => {
+                    form
+                        .validateFields()
+                        .then((values) => {
+                            try {
+                                const json = ipt === '' ? [] : JSON.parse(ipt);
+                                const param2Arr = []
+
+                                //尝试将param2转为JSON数组
+                                try {
+                                    const param2JsonObj = JSON.parse(param2);
+                                    if (Array.isArray(param2JsonObj)) {
+                                        param2Arr = param2JsonObj;
+                                    } else {
+                                        param2Arr.push(param2JsonObj);
+                                    }
+                                }
+                                //如果失败，则按字符串处理
+                                catch (e) {
+                                    if (param2.startsWith('eval(') && param2.endsWith(')')) {
+                                        //这里特殊处理repeat
+                                        for (let i = 0; i < repeat; i++) {
+                                            param2Arr.push(eval(param2));
+                                        }
+                                    } else {
+                                        param2.split(',').forEach(item => param2Arr.push(item.trim()));
+                                    }
+                                }
+
+                                // repeat 多份
+                                if (param2Arr.length === 1) {
+                                    for (let i = 0; i < repeat - 1; i++) {
+                                        param2Arr.push(param2Arr[0]);
+                                    }
+                                }
+
+                                if (Array.isArray(json)) {
+                                    if (json.length > 0) {
+                                        let last = ''
+                                        json.forEach((key, index) => {
+                                            if (index < param2Arr.length) {
+                                                last = param2Arr[index]
+                                            }
+                                            key[param1] = last;
+                                        })
+                                    } else {
+                                        param2Arr.forEach(item => {
+                                            json.push({ [param1]: item });
+                                        })
+                                    }
+                                } else {
+                                    if (param2Arr.length >= 1) {
+                                        json[param1] = param2Arr[0];
+                                    }
+                                }
+
+                                if (jsonFormal)
+                                    setOpt(JSON.stringify(json, null, '\t'));
+                                else
+                                    setOpt(JSON.stringify(json));
+                            } catch (e) {
+                                console.error(e);
+                                message.error('操作异常');
+                            }
+
+                            setArrayToJsonModal(false);
+                        })
+                        .catch((info) => {
+                            //console.log('Validate Failed:', info);
+                        });
+                }}
+                onCancel={() => { setArrayToJsonModal(false); }}>
+                <Form
+                    form={form}
+                    layout="vertical"
+                    initialValues={{
+                        modifier: 'public',
+                    }}
+                    style={{ paddingTop: 20 }}
+                >
+                    <FormItem>
+                        <Card>
+                            在JSON对象中插入Key或编辑现有的Key，如果JSON对象是数组，则会将数据依次写入数组中的每个对象。如果数据是多个，则会依次写入每个对象的Key中。
+                        </Card>
+                    </FormItem>
+                    <Form.Item
+                        name="jsonkey"
+                        label="Key"
+                        rules={[
+                            {
+                                required: true,
+                                message: '请输入正确的Key',
+                            },
+                        ]}
+                        onChange={e => { setParam1(e.target.value.trim().replace(' ', '')) }}
+                    >
+                        <Input placeholder="例如：name" />
+                    </Form.Item>
+                    <Form.Item
+                        name="dataArray"
+                        label={
+                            <>
+                                数据（多个逗号分割）
+                                <Popover
+                                    content={
+                                        <div>
+                                            <p>支持的格式有：</p>
+                                            <p>字符串，例如：1234</p>
+                                            <p>多个字符逗号分隔，例如：1,2,3,4</p>
+                                            <p>JSON对象，例如：
+                                                <code>
+                                                    {JSON.stringify({ name: '张三', age: 18 })}
+                                                </code>
+                                            </p>
+                                            <p>JS脚本，例如：eval(new Date().getTime())</p>
+                                        </div>
+                                    }>
+                                    <QuestionCircleOutlined />
+                                </Popover>
+                            </>}
+                        onChange={e => { setParam2(e.target.value) }}
+                        rows={4}
+                    >
+                        <TextArea rows={4} placeholder='例如：1231 或 1,2,3,...' />
+                    </Form.Item>
+                    <Form.Item
+                        name="repeat"
+                        label={
+                            <>
+                                重复次数 &nbsp;
+                                <Popover
+                                    content={
+                                        <div>
+                                            <p>将数据复制 N 份，整合为集合进行匹配，如果数据已经为集合类型，则不生效</p>
+                                            <p>例如数据：1234</p>
+                                            <p>重复次数：3</p>
+                                            <p>等价于直接输入数据：1234,1234,1234</p>
+                                        </div>
+                                    }>
+                                    <QuestionCircleOutlined />
+                                </Popover>
+                            </>}
+                        initialValue={1}
+                        onChange={e => { setRepeat(e.target.value) }}
+                    >
+                        <InputNumber min={1} max={1000} />
+                    </Form.Item>
+                </Form>
+            </Modal >
+        </>
+    )
+}
+
 const JsonTool = () => {
     return (
         <Tabs
@@ -208,6 +408,11 @@ const JsonTool = () => {
                 },
                 {
                     key: '3',
+                    label: 'JSON编辑器',
+                    children: <JsonEditor />,
+                },
+                {
+                    key: '4',
                     label: '模型转换',
                     children: '敬请期待...',
                 },

@@ -9,6 +9,7 @@ import JsonTool from './Pages/JsonTool';
 import GenerateTool from './Pages/GenerateTool';
 import XuanXue from './Pages/XuanXue';
 import Links from './Pages/Links';
+import WebCrawler from './Pages/WebCrawler';
 
 const router = createBrowserRouter([
   {
@@ -32,13 +33,17 @@ const router = createBrowserRouter([
         element: <GenerateTool />,
       },
       {
+        path: "/WebCrawler",
+        element: <WebCrawler />,
+      },
+      {
         path: "/XuanXue",
         element: <XuanXue />,
       },
       {
         path: "/Links",
         element: <Links />,
-      },
+      }
     ],
   },
 ]);

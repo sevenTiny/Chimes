@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ToolOutlined, HomeOutlined, LinkOutlined, BuildOutlined, BulbOutlined } from '@ant-design/icons';
+import { ToolOutlined, HomeOutlined, LinkOutlined, BuildOutlined, BulbOutlined, BugOutlined } from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu, theme, Image, Row, Col } from 'antd';
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
@@ -20,6 +20,11 @@ const menuItems = [
     label: '快速生成器',
     key: '/GenerateTool',
     icon: <BuildOutlined />,
+  },
+  {
+    label: 'Web爬虫',
+    key: '/WebCrawler',
+    icon: <BugOutlined />,
   },
   {
     label: '玄学',
@@ -59,13 +64,19 @@ const App = () => {
             </NavLink>
           </Col>
           <Col flex="auto">
-            <Menu theme="dark" mode="horizontal" selectedKeys={selectedKeys}>
-              {menuItems.map((item) => (
-                <Menu.Item key={item.key} icon={item.icon} disabled={item.disabled}>
-                  <NavLink to={item.key}>{item.label}</NavLink>
-                </Menu.Item>
-              ))}
-            </Menu>
+            <Menu
+              theme="dark"
+              mode="horizontal"
+              selectedKeys={selectedKeys}
+              items={menuItems.map((item) => {
+                return {
+                  key: item.key,
+                  label: <NavLink to={item.key}>{item.label}</NavLink>,
+                  disabled: item.disabled,
+                  icon: item.icon,
+                };
+              })}
+            />
           </Col>
         </Row>
       </Header>
