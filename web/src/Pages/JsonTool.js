@@ -185,7 +185,7 @@ const FieldExtraction = () => {
                     <CopyButton onGetText={() => opt} />
                 </Space>
                 <Card>
-                    JSON 字段提取工具可以将JSON字符串中的指定字段提取出来，以便于进行后续处理。
+                    JSON 字段提取工具可以将JSON对象中任意层级的字段值提取出来，以便于进行其他处理。
                 </Card>
             </Flex>
         </>
