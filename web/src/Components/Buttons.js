@@ -1,5 +1,4 @@
-import React from 'react';
-import { Button, message } from 'antd';
+import { Button, message, Card, Modal } from 'antd';
 
 const SuccessButton = ({
     title,
@@ -35,4 +34,34 @@ const CopyButton = ({
     )
 }
 
-export { SuccessButton, CopyButton };
+const DescriptionButton = ({
+    description,
+    ...props
+}) => {
+    return (
+        <>
+            <Button
+                type="link"
+                onClick={() => {
+                    Modal.info({
+                        title: '使用说明',
+                        width: '60%',
+                        content: (
+                            <p>
+                                {description}
+                            </p>
+                        ),
+                        okText: '朕已阅',
+                        onOk() { },
+                        maskClosable: true,
+                    });
+                }}
+                {...props}
+            >
+                使用说明
+            </Button>
+        </>
+    )
+}
+
+export { SuccessButton, CopyButton, DescriptionButton };

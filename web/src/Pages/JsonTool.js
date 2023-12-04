@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Tabs, Input, Flex, Space, Button, Card, message, Row, Col, Checkbox, Modal, Form, Popover, InputNumber } from 'antd';
-import { CopyButton } from '../Components/Buttons';
+import { Tabs, Input, Flex, Button, Card, message, Row, Col, Checkbox, Modal, Form, Popover, InputNumber } from 'antd';
+import { CopyButton, DescriptionButton } from '../Components/Buttons';
 import FormItem from 'antd/es/form/FormItem';
 
 const { TextArea } = Input;
@@ -20,8 +20,8 @@ const FormmatJson = () => {
                         <TextArea rows={30} placeholder="输出结果" value={opt} />
                     </Col>
                 </Row>
-                <Space gap="small" wrap>
-                    <CopyButton onGetText={() => opt} />
+                <Flex gap="small" wrap>
+                    <DescriptionButton description={'JSON 格式化工具可以将一段JSON字符串格式化为友好的可读形式，也可以将JSON字符串压缩成一行，以便于在网页中进行传输。'} />
                     <Button
                         type="primary"
                         onClick={() => {
@@ -88,10 +88,8 @@ const FormmatJson = () => {
                     >
                         单引号转双引号
                     </Button>
-                </Space>
-                <Card>
-                    JSON 格式化工具可以将一段JSON字符串格式化为友好的可读形式，也可以将JSON字符串压缩成一行，以便于在网页中进行传输。
-                </Card>
+                    <CopyButton onGetText={() => opt} />
+                </Flex>
             </Flex>
         </>
     )
@@ -113,7 +111,8 @@ const FieldExtraction = () => {
                         <TextArea rows={30} placeholder="输出结果" value={opt} />
                     </Col>
                 </Row>
-                <Space gap="small" wrap align='center'>
+                <Flex gap="small" wrap align='center'>
+                    <DescriptionButton description={'JSON 字段提取工具可以将JSON对象中任意层级的字段值提取出来，以便于进行其他处理。'} />
                     <label>JSON Key：</label>
                     <Input placeholder="请输入Key，多个逗号分隔" style={{ width: 200 }} onChange={e => { setKeys(e.target.value.trim().replace(' ', '').split(',')) }} />
                     <Button
@@ -123,9 +122,9 @@ const FieldExtraction = () => {
                                 const json = JSON.parse(ipt);
                                 //循环遍历json对象的每个key/value对, 筛选出key等于keys中的任何一项的 key/value对，并提取value, 对于数组list中的每个对象，也进行同样的操作
                                 const result = [];
-                                const extract = (json, prop) => {
+                                const extract = (json) => {
                                     Object.keys(json).forEach(key => {
-                                        if (key == prop) {
+                                        if (keys.includes(key)) {
                                             if (typeof json[key] === 'object' && json[key] != null) {
                                                 result.push(JSON.stringify(json[key]));
                                             } else {
@@ -133,20 +132,17 @@ const FieldExtraction = () => {
                                             }
                                         }
                                         if (typeof json[key] === 'object' && json[key] != null) {
-                                            extract(json[key], prop);
+                                            extract(json[key]);
                                         }
                                         else if (Array.isArray(json[key])) {
                                             json[key].forEach(item => {
-                                                extract(item, prop);
+                                                extract(item);
                                             })
                                         }
                                     })
                                 }
 
-                                keys.forEach(key => {
-                                    extract(json, key);
-                                })
-
+                                extract(json);
                                 setExtractValues(result);
                                 setOpt(result.join('\n'));
                             } catch (e) {
@@ -182,11 +178,75 @@ const FieldExtraction = () => {
                     >
                         结果逗号分割
                     </Button>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            try {
+                                const json = JSON.parse(ipt);
+                                //循环遍历json对象的每个key/value对, 筛选出key等于keys中的任何一项的 key/value对，并提取value, 对于数组list中的每个对象，也进行同样的操作
+                                const extract = (json) => {
+                                    const newJson = {};
+                                    let exist = false;
+                                    Object.keys(json).forEach(key => {
+                                        if (keys.includes(key)) {
+                                            newJson[key] = json[key];
+                                            exist = true;
+                                        }
+
+                                        if (Array.isArray(json[key])) {
+                                            const children = [];
+                                            json[key].forEach(item => {
+                                                const child = extract(item);
+                                                if (child != undefined) {
+                                                    children.push(child);
+                                                    exist = true;
+                                                }
+                                            })
+
+                                            if (children.length > 0) {
+                                                newJson[key] = children;
+                                            }
+                                        }
+                                        else if (typeof json[key] === 'object' && json[key] != null) {
+                                            const child = extract(json[key]);
+                                            if (child != undefined) {
+                                                newJson[key] = child;
+                                                exist = true;
+                                            }
+                                        }
+                                    })
+
+                                    return exist ? newJson : undefined;
+                                }
+
+                                if (Array.isArray(json)) {
+                                    const result = [];
+                                    json.forEach(item => {
+                                        const child = extract(item);
+                                        if (child != undefined) {
+                                            result.push(child);
+                                        }
+                                    })
+                                    setOpt(JSON.stringify(result, null, '\t'));
+                                    return;
+                                }
+                                else if (typeof json === 'object' && json != null) {
+                                    const child = extract(json);
+                                    if (child != undefined) {
+                                        setOpt(JSON.stringify(child, null, '\t'));
+                                    }
+                                } else {
+                                    message.error('JSON 格式错误');
+                                }
+                            } catch (e) {
+                                console.error(e);
+                                message.error('JSON 格式错误或提取发生错误');
+                            }
+                        }}>
+                        仅移除其他字段
+                    </Button>
                     <CopyButton onGetText={() => opt} />
-                </Space>
-                <Card>
-                    JSON 字段提取工具可以将JSON对象中任意层级的字段值提取出来，以便于进行其他处理。
-                </Card>
+                </Flex>
             </Flex>
         </>
     )
@@ -196,9 +256,11 @@ const JsonEditor = () => {
     const [ipt, setIpt] = useState('');
     const [param1, setParam1] = useState('')
     const [param2, setParam2] = useState('')
+    const [keys, setKeys] = useState([])
     const [repeat, setRepeat] = useState(1)
     const [opt, setOpt] = useState('');
     const [jsonFormal, setJsonFormal] = useState(false);
+    const [removeEmptyProperty, setRemoveEmptyProperty] = useState(false);
     const [arrayToJsonModal, setArrayToJsonModal] = useState(false);
     const { TextArea } = Input;
     const [form] = Form.useForm();
@@ -229,6 +291,70 @@ const JsonEditor = () => {
                         type="primary"
                         onClick={() => { setArrayToJsonModal(true) }}>
                         数据写入JSON
+                    </Button>
+                    <label>JSON Key：</label>
+                    <Input placeholder="多个逗号分隔" style={{ width: 150 }} onChange={e => { setKeys(e.target.value.trim().replace(' ', '').split(',')) }} />
+                    <Checkbox
+                        onChange={e => {
+                            setRemoveEmptyProperty(e.target.checked);
+                        }}>移除空对象</Checkbox>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            const remove = (jsonObj) => {
+                                Object.keys(jsonObj).forEach(key => {
+                                    if (keys.includes(key)) {
+                                        delete jsonObj[key];
+                                    }
+
+                                    if (Array.isArray(jsonObj[key])) {
+                                        jsonObj[key].forEach(item => {
+                                            remove(item);
+                                        })
+
+                                        if (removeEmptyProperty) {
+                                            const newChildren = []
+                                            jsonObj[key].forEach(child => {
+                                                if (Object.keys(child).length !== 0)
+                                                    newChildren.push(child);
+                                            })
+
+                                            if (newChildren.length === 0) {
+                                                delete jsonObj[key];
+                                            } else {
+                                                jsonObj[key] = newChildren;
+                                            }
+                                        }
+                                    }
+                                    else if (typeof jsonObj[key] === 'object' && jsonObj[key] != null) {
+                                        remove(jsonObj[key]);
+
+                                        if (Object.keys(jsonObj[key]).length === 0 && removeEmptyProperty)
+                                            delete jsonObj[key];
+                                    }
+                                })
+                            }
+
+                            try {
+                                const json = JSON.parse(ipt);
+
+                                if (Array.isArray(json)) {
+                                    json.forEach(item => {
+                                        remove(item);
+                                    })
+                                }
+                                else if (typeof json === 'object' && json != null) {
+                                    remove(json);
+                                }
+
+                                remove(json)
+                                setOpt(JSON.stringify(json, null, '\t'));
+                            } catch (e) {
+                                console.error(e);
+                                message.error('JSON 格式错误或操作发生异常');
+                            }
+                        }}>
+                        移除指定字段
                     </Button>
                     <CopyButton onGetText={() => opt} />
                 </Flex>
