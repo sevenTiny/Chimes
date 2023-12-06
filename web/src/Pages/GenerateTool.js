@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Tabs, Input, Flex, Space, Button, Card, message, Checkbox, Dropdown } from 'antd';
-import { CopyButton } from '../Components/Buttons';
+import { CopyButton, DescriptionButton } from '../Components/Buttons';
 import { v4 as uuid } from 'uuid'
 
 const { TextArea } = Input;
 
-const FormmatJson = () => {
+const GenerateGuid = () => {
     const [removeSeparator, setRemoveSeparator] = useState(false); // 去除分隔符
     const [smallCase, setSmallCase] = useState(false); // 小写
     const [opt, setOpt] = useState('');
@@ -27,6 +27,7 @@ const FormmatJson = () => {
             <Flex vertical='vertical' gap='middle'>
                 <TextArea rows={20} placeholder="输出结果" value={opt} />
                 <Space gap="small" wrap align='center'>
+                    <DescriptionButton description={'GUID生成工具可以快速生成一个或多个GUID，支持多种格式输出。'} />
                     <CopyButton onGetText={() => opt} />
                     <Checkbox onChange={e => { setRemoveSeparator(e.target.checked) }}>去除分隔符</Checkbox>
                     <Checkbox onChange={e => { setSmallCase(e.target.checked) }}>小写</Checkbox>
@@ -74,9 +75,6 @@ const FormmatJson = () => {
                         结果逗号分割
                     </Button>
                 </Space>
-                <Card>
-                    GUID生成工具可以快速生成一个或多个GUID，支持多种格式输出。
-                </Card>
             </Flex >
         </>
     )
@@ -91,7 +89,7 @@ const GenerateTool = () => {
                 {
                     key: '1',
                     label: 'GUID生成',
-                    children: <FormmatJson />,
+                    children: <GenerateGuid />,
                 }
             ]} />
     )

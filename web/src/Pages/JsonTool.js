@@ -14,10 +14,10 @@ const FormmatJson = () => {
             <Flex vertical='vertical' gap='middle'>
                 <Row gutter={16}>
                     <Col span={8}>
-                        <TextArea rows={30} placeholder="来一段JSON" onChange={e => { setIpt(e.target.value) }} />
+                        <TextArea rows={20} placeholder="来一段JSON" onChange={e => { setIpt(e.target.value) }} />
                     </Col>
                     <Col span={16}>
-                        <TextArea rows={30} placeholder="输出结果" value={opt} />
+                        <TextArea rows={20} placeholder="输出结果" value={opt} />
                     </Col>
                 </Row>
                 <Flex gap="small" wrap>
@@ -105,10 +105,10 @@ const FieldExtraction = () => {
             <Flex vertical='vertical' gap='middle'>
                 <Row gutter={16}>
                     <Col span={10}>
-                        <TextArea rows={30} placeholder="来一段JSON" onChange={e => { setIpt(e.target.value) }} />
+                        <TextArea rows={20} placeholder="来一段JSON" onChange={e => { setIpt(e.target.value) }} />
                     </Col>
                     <Col span={14}>
-                        <TextArea rows={30} placeholder="输出结果" value={opt} />
+                        <TextArea rows={20} placeholder="输出结果" value={opt} />
                     </Col>
                 </Row>
                 <Flex gap="small" wrap align='center'>
@@ -269,10 +269,10 @@ const JsonEditor = () => {
             <Flex vertical='vertical' gap='middle'>
                 <Row gutter={16}>
                     <Col span={10}>
-                        <TextArea rows={30} placeholder="原始JSON，编辑器将对该JSON进行编辑。如果未输入原始JSON，将会依据数据自动创造JSON。" onChange={e => { setIpt(e.target.value) }} />
+                        <TextArea rows={20} placeholder="原始JSON，编辑器将对该JSON进行编辑。如果未输入原始JSON，将会依据数据自动创造JSON。" onChange={e => { setIpt(e.target.value) }} />
                     </Col>
                     <Col span={14}>
-                        <TextArea rows={30} placeholder="输出结果" value={opt} />
+                        <TextArea rows={20} placeholder="输出结果" value={opt} />
                     </Col>
                 </Row>
                 <Flex gap="small" wrap align='center'>
