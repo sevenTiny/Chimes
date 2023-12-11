@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Tabs, Input, Flex, Button, Card, message, Row, Col, Checkbox, Modal, Form, Popover, InputNumber } from 'antd';
+import { Tabs, Input, Flex, Button, Card, message, Row, Col, Checkbox, Modal, Form, Popover, InputNumber, Slider } from 'antd';
 import { CopyButton, DescriptionButton } from '../Components/Buttons';
 import FormItem from 'antd/es/form/FormItem';
+import helper from '../helper';
+import * as monaco from "monaco-editor"
 
 const { TextArea } = Input;
+const editorHeight = helper.getEditorHeight();
 
 const FormmatJson = () => {
     const [ipt, setIpt] = useState('');
@@ -14,10 +17,10 @@ const FormmatJson = () => {
             <Flex vertical='vertical' gap='middle'>
                 <Row gutter={16}>
                     <Col span={8}>
-                        <TextArea rows={20} placeholder="来一段JSON" onChange={e => { setIpt(e.target.value) }} />
+                        <TextArea rows={editorHeight} placeholder="来一段JSON" onChange={e => { setIpt(e.target.value) }} />
                     </Col>
                     <Col span={16}>
-                        <TextArea rows={20} placeholder="输出结果" value={opt} />
+                        <TextArea rows={editorHeight} placeholder="输出结果" value={opt} />
                     </Col>
                 </Row>
                 <Flex gap="small" wrap>
@@ -105,10 +108,10 @@ const FieldExtraction = () => {
             <Flex vertical='vertical' gap='middle'>
                 <Row gutter={16}>
                     <Col span={10}>
-                        <TextArea rows={20} placeholder="来一段JSON" onChange={e => { setIpt(e.target.value) }} />
+                        <TextArea rows={editorHeight} placeholder="来一段JSON" onChange={e => { setIpt(e.target.value) }} />
                     </Col>
                     <Col span={14}>
-                        <TextArea rows={20} placeholder="输出结果" value={opt} />
+                        <TextArea rows={editorHeight} placeholder="输出结果" value={opt} />
                     </Col>
                 </Row>
                 <Flex gap="small" wrap align='center'>
@@ -254,37 +257,81 @@ const FieldExtraction = () => {
 
 const JsonEditor = () => {
     const [ipt, setIpt] = useState('');
+    const [opt, setOpt] = useState('');
     const [param1, setParam1] = useState('')
     const [param2, setParam2] = useState('')
     const [keys, setKeys] = useState([])
     const [repeat, setRepeat] = useState(1)
-    const [opt, setOpt] = useState('');
-    const [jsonFormal, setJsonFormal] = useState(false);
-    const [removeEmptyProperty, setRemoveEmptyProperty] = useState(false);
+    const [jsonFormal, setJsonFormal] = useState(true);
+    const [removeEmptyProperty, setRemoveEmptyProperty] = useState(true);
     const [arrayToJsonModal, setArrayToJsonModal] = useState(false);
     const { TextArea } = Input;
     const [form] = Form.useForm();
+    const editorContainer = useRef(null);
+    const myEditor = useRef(null);
+    const isSet = useRef(false);
+
+    /**
+     * https://juejin.cn/post/6984683777343619102#heading-8
+     * https://microsoft.github.io/monaco-editor/playground.html?source=v0.45.0#example-customizing-the-appearence-scrollbars
+     */
+    const initEditor = () => {
+        monaco.editor.setTheme("vs") //默认"vs", 支持"vs-dark"、"hc-black"
+
+        const editor = monaco.editor.create(
+            editorContainer.current,
+            {
+                ipt,
+                language: "javascript/javascript",
+                automaticLayout: true,
+                placeholder: "原始JSON，编辑器将对该JSON进行编辑。如果未输入原始JSON，将会依据数据自动创造JSON。",
+                minimap: {
+                    maxColumn: 80
+                }
+            }
+        );
+
+        editor.onDidChangeModelContent(() => {
+            setIpt(myEditor.current.getValue());
+        });
+
+        myEditor.current = editor;
+    }
+
+    useEffect(() => {
+        if (isSet.current)
+            return;
+
+        initEditor()
+        isSet.current = true;
+    }, [])
+
+    useEffect(() => {
+        if (myEditor.current)
+            myEditor.current.setValue(opt);
+    }, [opt])
+
     return (
         <>
             <Flex vertical='vertical' gap='middle'>
-                <Row gutter={16}>
-                    <Col span={10}>
-                        <TextArea rows={20} placeholder="原始JSON，编辑器将对该JSON进行编辑。如果未输入原始JSON，将会依据数据自动创造JSON。" onChange={e => { setIpt(e.target.value) }} />
-                    </Col>
-                    <Col span={14}>
-                        <TextArea rows={20} placeholder="输出结果" value={opt} />
-                    </Col>
-                </Row>
+                {/* <TextArea
+                    rows={editorHeight}
+                    placeholder="原始JSON，编辑器将对该JSON进行编辑。如果未输入原始JSON，将会依据数据自动创造JSON。"
+                    value={ipt}
+                    onChange={e => { setIpt(e.target.value) }}
+                    style={{ resize: 'none' }}
+                /> */}
+                <div ref={editorContainer} style={{ height: window.innerHeight - 320 }}></div>
                 <Flex gap="small" wrap align='center'>
-                    <label>JSON Key：</label>
                     <Checkbox
+                        defaultChecked={true}
                         onChange={e => {
                             setJsonFormal(e.target.checked);
-                            if (opt !== '') {
+                            if (ipt !== '') {
                                 if (e.target.checked)
-                                    setOpt(JSON.stringify(JSON.parse(opt), null, '\t'));
+                                    setOpt(JSON.stringify(JSON.parse(ipt), null, '\t'));
                                 else
-                                    setOpt(JSON.stringify(JSON.parse(opt)));
+                                    setOpt(JSON.stringify(JSON.parse(ipt)));
                             }
                         }}>格式化</Checkbox>
                     <Button
@@ -295,6 +342,7 @@ const JsonEditor = () => {
                     <label>JSON Key：</label>
                     <Input placeholder="多个逗号分隔" style={{ width: 150 }} onChange={e => { setKeys(e.target.value.trim().replace(' ', '').split(',')) }} />
                     <Checkbox
+                        defaultChecked={true}
                         onChange={e => {
                             setRemoveEmptyProperty(e.target.checked);
                         }}>移除空对象</Checkbox>
@@ -356,7 +404,7 @@ const JsonEditor = () => {
                         }}>
                         移除指定字段
                     </Button>
-                    <CopyButton onGetText={() => opt} />
+                    <CopyButton onGetText={() => myEditor.current.getValue()} />
                 </Flex>
             </Flex>
 

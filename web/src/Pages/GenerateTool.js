@@ -7,7 +7,7 @@ const { TextArea } = Input;
 
 const GenerateGuid = () => {
     const [removeSeparator, setRemoveSeparator] = useState(false); // 去除分隔符
-    const [smallCase, setSmallCase] = useState(false); // 小写
+    const [smallCase, setSmallCase] = useState(true); // 小写
     const [opt, setOpt] = useState('');
     //生成GUID
     const generate = (count) => {
@@ -30,7 +30,7 @@ const GenerateGuid = () => {
                     <DescriptionButton description={'GUID生成工具可以快速生成一个或多个GUID，支持多种格式输出。'} />
                     <CopyButton onGetText={() => opt} />
                     <Checkbox onChange={e => { setRemoveSeparator(e.target.checked) }}>去除分隔符</Checkbox>
-                    <Checkbox onChange={e => { setSmallCase(e.target.checked) }}>小写</Checkbox>
+                    <Checkbox defaultChecked={true} onChange={e => { setSmallCase(e.target.checked) }}>小写</Checkbox>
                     <Button
                         type="primary"
                         onClick={() => generate(1)}>
