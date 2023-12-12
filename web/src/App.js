@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ToolOutlined, HomeOutlined, LinkOutlined, BuildOutlined, BulbOutlined, EyeOutlined, UserOutlined } from '@ant-design/icons';
+import { ToolOutlined, HomeOutlined, LinkOutlined, BuildOutlined, BulbOutlined, EyeOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu, theme, Image, Row, Col } from 'antd';
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
@@ -7,9 +7,9 @@ const { Header, Content, Footer } = Layout;
 
 const menuItems = [
   {
-    label: 'Home',
-    key: '/Home',
-    icon: <HomeOutlined />,
+    label: '常用工具',
+    key: '/CommonTool',
+    icon: <ToolOutlined />,
   },
   {
     label: 'JSON 工具',
@@ -17,7 +17,7 @@ const menuItems = [
     icon: <ToolOutlined />,
   },
   {
-    label: '快速生成器',
+    label: '生成器',
     key: '/GenerateTool',
     icon: <BuildOutlined />,
   },
@@ -38,8 +38,8 @@ const menuItems = [
   },
   {
     label: '关于',
-    key: '/TimeLine',
-    icon: <LinkOutlined />,
+    key: '/About',
+    icon: <EnvironmentOutlined />,
   },
 ];
 

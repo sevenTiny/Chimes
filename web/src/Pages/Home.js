@@ -2,7 +2,7 @@ import React from 'react';
 
 const Home = () => {
     return <>
-        施工中...
+        首页施工中...
     </>
 }
 

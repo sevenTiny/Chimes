@@ -10,7 +10,8 @@ import GenerateTool from './Pages/GenerateTool';
 import XuanXue from './Pages/XuanXue';
 import Links from './Pages/Links';
 import Diff from './Pages/Diff';
-import TimeLine from './Pages/TimeLine';
+import About from './Pages/About';
+import CommonTool from './Pages/CommonTool';
 
 
 const router = createBrowserRouter([
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: "/Home",
         element: <Home />,
+      },
+      {
+        path: "/CommonTool",
+        element: <CommonTool />,
       },
       {
         path: "/JsonTool",
@@ -47,8 +52,8 @@ const router = createBrowserRouter([
         element: <Links />,
       },
       {
-        path: "/TimeLine",
-        element: <TimeLine />,
+        path: "/About",
+        element: <About />,
       }
     ],
   },

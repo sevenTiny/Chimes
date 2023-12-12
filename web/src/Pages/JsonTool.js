@@ -314,13 +314,6 @@ const JsonEditor = () => {
     return (
         <>
             <Flex vertical='vertical' gap='middle'>
-                {/* <TextArea
-                    rows={editorHeight}
-                    placeholder="原始JSON，编辑器将对该JSON进行编辑。如果未输入原始JSON，将会依据数据自动创造JSON。"
-                    value={ipt}
-                    onChange={e => { setIpt(e.target.value) }}
-                    style={{ resize: 'none' }}
-                /> */}
                 <div ref={editorContainer} style={{ height: window.innerHeight - 320 }}></div>
                 <Flex gap="small" wrap align='center'>
                     <Checkbox
