@@ -4,58 +4,13 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from './App';
-import Home from './Pages/Home';
-import JsonTool from './Pages/JsonTool';
-import GenerateTool from './Pages/GenerateTool';
-import XuanXue from './Pages/XuanXue';
-import Links from './Pages/Links';
-import Diff from './Pages/Diff';
-import About from './Pages/About';
-import CommonTool from './Pages/CommonTool';
-
+import route from './route';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    children: [
-      {
-        path: "/",
-        element: <Home />,
-      },
-      {
-        path: "/Home",
-        element: <Home />,
-      },
-      {
-        path: "/CommonTool",
-        element: <CommonTool />,
-      },
-      {
-        path: "/JsonTool",
-        element: <JsonTool />,
-      },
-      {
-        path: "/GenerateTool",
-        element: <GenerateTool />,
-      },
-      {
-        path: "/Diff",
-        element: <Diff />,
-      },
-      {
-        path: "/XuanXue",
-        element: <XuanXue />,
-      },
-      {
-        path: "/Links",
-        element: <Links />,
-      },
-      {
-        path: "/About",
-        element: <About />,
-      }
-    ],
+    children:  route,
   },
 ]);
 

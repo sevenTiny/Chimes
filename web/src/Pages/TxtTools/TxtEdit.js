@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, Input, Flex, Button, message, Popover } from 'antd';
-import { CopyButton } from '../Components/Buttons';
+import { CopyButton } from '../../Components/Buttons';
 import * as monaco from "monaco-editor"
 
-const TextEdit = () => {
+const TxtEdit = () => {
     const [ipt, setIpt] = useState('');
     const [opt, setOpt] = useState('');
     const [search, setSearch] = useState('');
@@ -50,8 +50,8 @@ const TextEdit = () => {
     }, [opt])
 
     return <>
-        <Flex vertical='vertical' gap='middle'>
-            <div ref={editorContainer} style={{ height: window.innerHeight - 320 }}></div>
+        <Flex vertical='vertical' gap='middle' style={{ paddingTop: 20 }}>
+            <div ref={editorContainer} style={{ height: window.innerHeight - 250 }}></div>
             <Flex gap="small" wrap align='center'>
                 <Button
                     type="primary"
@@ -164,19 +164,4 @@ const TextEdit = () => {
     </>
 }
 
-const CommonTool = () => {
-    return (
-        <Tabs
-            defaultActiveKey="0"
-            size='large'
-            items={[
-                {
-                    key: '0',
-                    label: '文本编辑',
-                    children: <TextEdit />,
-                }
-            ]} />
-    )
-}
-
-export default CommonTool;
+export default TxtEdit;

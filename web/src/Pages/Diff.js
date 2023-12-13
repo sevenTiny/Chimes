@@ -44,7 +44,7 @@ const Home = () => {
 
     return <>
         <div style={{ paddingTop: 20 }}>
-            <div ref={editorContainer} style={{ height: window.innerHeight - 230 }}></div>
+            <div ref={editorContainer} style={{ height: window.innerHeight - 180 }}></div>
         </div>
     </>
 }

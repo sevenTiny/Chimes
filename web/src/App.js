@@ -1,50 +1,43 @@
 import { useState, useEffect } from 'react';
-import { ToolOutlined, HomeOutlined, LinkOutlined, BuildOutlined, BulbOutlined, EyeOutlined, EnvironmentOutlined } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme, Image, Row, Col } from 'antd';
+import { HomeOutlined } from '@ant-design/icons';
+import { Breadcrumb, Layout, Menu, theme, Image } from 'antd';
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import route from './route';
 
-const { Header, Content, Footer } = Layout;
+const { Content, Footer, Sider } = Layout;
 
-const menuItems = [
-  {
-    label: '常用工具',
-    key: '/CommonTool',
-    icon: <ToolOutlined />,
-  },
-  {
-    label: 'JSON 工具',
-    key: '/JsonTool',
-    icon: <ToolOutlined />,
-  },
-  {
-    label: '生成器',
-    key: '/GenerateTool',
-    icon: <BuildOutlined />,
-  },
-  {
-    label: '对比工具',
-    key: '/Diff',
-    icon: <EyeOutlined />,
-  },
-  {
-    label: '玄学',
-    key: '/XuanXue',
-    icon: <BulbOutlined />,
-  },
-  {
-    label: '常用链接',
-    key: '/Links',
-    icon: <LinkOutlined />,
-  },
-  {
-    label: '关于',
-    key: '/About',
-    icon: <EnvironmentOutlined />,
-  },
-];
+const convertMenu = (route) => {
+  return route.filter((item) => item.path != '/' && item.label).map((item) => {
+    return {
+      key: item.path,
+      label: item.children ? item.label : <NavLink to={item.path}>{item.label}</NavLink>,
+      disabled: item.disabled,
+      icon: item.icon,
+      children: item.children ? convertMenu(item.children) : null,
+    };
+  });
+}
+
+const convertMenuToSameFloor = (menuItems) => {
+  const menus = [];
+  menuItems.forEach((item) => {
+    menus.push(item);
+
+    if (item.children) {
+      item.children.forEach((child) => menus.push(child))
+    }
+  });
+
+  return menus;
+}
 
 const App = () => {
-  const { token: { colorBgContainer } } = theme.useToken();
+  const [collapsed, setCollapsed] = useState(false);
+  const { token: { colorBgContainer }, } = theme.useToken();
+  // convert route to menu
+  const menuItems = convertMenu(route);
+  // menu same fllor
+  const sameFloorMenus = convertMenuToSameFloor(menuItems);
   const [currentMenu, setCurrentMenu] = useState({});
   // 定义selectedKeys，来控制菜单选中状态和切换页面
   const [selectedKeys, setSelectedKeys] = useState([]);
@@ -55,59 +48,49 @@ const App = () => {
     // location.pathname对应路由数据中的path属性
     setSelectedKeys([location.pathname]);
     // store current menu
-    setCurrentMenu(menuItems.find((item) => item.key === location.pathname));
+    setCurrentMenu(sameFloorMenus.find((item) => item.key === location.pathname));
   }, [location]);
 
   return (
-    <Layout className="layout">
-      <Header style={{ alignItems: 'center' }}>
-        <Row>
-          <Col flex="130px">
-            <NavLink to='/'>
-              <Image src='favicon.ico' preview={false} style={{ marginLeft: 0, marginRight: 10, width: '70%' }} />
-              <font size={3} color={'white'}>Chimes</font>
-            </NavLink>
-          </Col>
-          <Col flex="auto">
-            <Menu
-              theme="dark"
-              mode="horizontal"
-              selectedKeys={selectedKeys}
-              items={menuItems.map((item) => {
-                return {
-                  key: item.key,
-                  label: <NavLink to={item.key}>{item.label}</NavLink>,
-                  disabled: item.disabled,
-                  icon: item.icon,
-                };
-              })}
-            />
-          </Col>
-        </Row>
-      </Header>
-
-      <Content style={{ padding: '20px', background: colorBgContainer }}>
-        {
-          location.pathname != '/' &&
-          location.pathname != '/Home' &&
-          <Breadcrumb items={
-            [
-              {
-                href: '/',
-                title: <HomeOutlined />,
-              },
-              {
-                title: currentMenu?.label
-              }
-            ]} />
-        }
-        <Outlet />
-      </Content>
-
-      <Footer style={{ textAlign: 'center', height: 60, padding: 15 }}>
-        Chimes ©2023 Created by 7tiny<br />
-        <span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv"></span> 次</span>
-      </Footer>
+    // vertical layout
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+        <div style={{ margin: 20 }} >
+          <NavLink to='/'>
+            <Image src='/favicon.ico' preview={false} style={{ marginLeft: 0, marginRight: 10, width: '70%' }} />
+            <font size={3} color={'white'}>Chimes</font>
+          </NavLink>
+        </div>
+        <Menu
+          theme="dark"
+          mode="inline"
+          selectedKeys={selectedKeys}
+          items={menuItems}
+        />
+      </Sider>
+      <Layout style={{ background: colorBgContainer }}>
+        <Content style={{ margin: 16 }}>
+          {
+            location.pathname != '/' &&
+            location.pathname != '/Home' &&
+            <Breadcrumb items={
+              [
+                {
+                  href: '/',
+                  title: <HomeOutlined />,
+                },
+                {
+                  title: currentMenu?.label
+                }
+              ]} />
+          }
+          <Outlet />
+        </Content>
+        <Footer style={{ textAlign: 'center', height: 60, padding: 15 }}>
+          Chimes ©2023 Created by 7tiny<br />
+          <span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv"></span> 次</span>
+        </Footer>
+      </Layout>
     </Layout>
   );
 };

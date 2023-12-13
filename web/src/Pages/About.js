@@ -66,8 +66,9 @@ const Comment = () => {
                 欢迎留下些宝贵的意见或建议，由于站主较懒，您的宝贵反馈也不一定会有所响应，但万一看到开心了呢~~~
             </Paragraph>
         </Typography>
-
-        <div id="vcomments"></div>
+        <div style={{ padding: 40 }}>
+            <div id="vcomments"></div>
+        </div>
     </>
 }
 
