@@ -575,7 +575,7 @@ const JsonTool = () => {
                 },
                 {
                     key: '3',
-                    label: 'JSON编辑器',
+                    label: 'JSON编辑',
                     children: <JsonEditor />,
                 },
                 {
