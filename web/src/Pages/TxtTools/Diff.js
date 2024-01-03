@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as monaco from "monaco-editor"
+import { PageBox } from '../../CustomComponents';
 
 const Home = () => {
     const editorContainer = useRef(null);
@@ -43,9 +44,9 @@ const Home = () => {
     }, [])
 
     return <>
-        <div style={{ paddingTop: 20 }}>
+        <PageBox>
             <div ref={editorContainer} style={{ height: window.innerHeight - 180 }}></div>
-        </div>
+        </PageBox>
     </>
 }
 

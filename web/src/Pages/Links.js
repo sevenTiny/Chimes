@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, Space } from 'antd';
+import { PageBox } from '../CustomComponents';
 
 const Links = () => {
     const links = [
@@ -16,7 +17,7 @@ const Links = () => {
     ]
 
     return <>
-        <div style={{ padding: 20 }}>
+        <PageBox>
             <Space wrap>
                 {
                     links.map((link, index) => {
@@ -32,7 +33,7 @@ const Links = () => {
                     })
                 }
             </Space>
-        </div>
+        </PageBox>
     </>
 }
 

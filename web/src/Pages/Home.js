@@ -2,7 +2,7 @@ import React from 'react';
 
 const Home = () => {
     return <>
-        首页施工中...
+        欢迎访问Chimes工具站
     </>
 }
 

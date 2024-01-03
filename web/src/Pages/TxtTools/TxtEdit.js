@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Tabs, Input, Flex, Button, message, Popover } from 'antd';
-import { CopyButton } from '../../Components/Buttons';
+import { Input, Flex, Button, message, Popover } from 'antd';
+import { CopyButton, PageBox } from '../../CustomComponents';
 import * as monaco from "monaco-editor"
 
 const TxtEdit = () => {
@@ -50,117 +50,119 @@ const TxtEdit = () => {
     }, [opt])
 
     return <>
-        <Flex vertical='vertical' gap='middle' style={{ paddingTop: 20 }}>
-            <div ref={editorContainer} style={{ height: window.innerHeight - 250 }}></div>
-            <Flex gap="small" wrap align='center'>
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        try {
-                            setOpt(ipt.replace(/ +/g, ''));
-                        } catch (e) {
-                            message.error('操作异常');
-                        }
-                    }}>
-                    移除空格
-                </Button>
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        try {
-                            setOpt(ipt.replace(/ +/g, ' '));
-                        } catch (e) {
-                            message.error('操作异常');
-                        }
-                    }}>
-                    合并空格
-                </Button>
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        try {
-                            setOpt(ipt.replace(/\r\n/g, '').replace(/\n/g, ''));
-                        } catch (e) {
-                            message.error('操作异常');
-                        }
-                    }}>
-                    移除换行
-                </Button>
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        try {
-                            let val = ipt;
-                            while (val.indexOf('\n\n') > -1) {
-                                val = val.replace(/\n\n/g, '\n');
+        <PageBox>
+            <Flex vertical='vertical' gap='middle'>
+                <div ref={editorContainer} style={{ height: window.innerHeight - 250 }}></div>
+                <Flex gap="small" wrap align='center'>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            try {
+                                setOpt(ipt.replace(/ +/g, ''));
+                            } catch (e) {
+                                message.error('操作异常');
                             }
-                            setOpt(val);
-                        } catch (e) {
-                            message.error('操作异常');
+                        }}>
+                        移除空格
+                    </Button>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            try {
+                                setOpt(ipt.replace(/ +/g, ' '));
+                            } catch (e) {
+                                message.error('操作异常');
+                            }
+                        }}>
+                        合并空格
+                    </Button>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            try {
+                                setOpt(ipt.replace(/\r\n/g, '').replace(/\n/g, ''));
+                            } catch (e) {
+                                message.error('操作异常');
+                            }
+                        }}>
+                        移除换行
+                    </Button>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            try {
+                                let val = ipt;
+                                while (val.indexOf('\n\n') > -1) {
+                                    val = val.replace(/\n\n/g, '\n');
+                                }
+                                setOpt(val);
+                            } catch (e) {
+                                message.error('操作异常');
+                            }
+                        }}>
+                        合并换行
+                    </Button>
+                    <label>查找字符：</label>
+                    <Input placeholder="查找字符" style={{ width: 150 }} onChange={e => { setSearch(e.target.value) }} />
+                    <label>新字符：</label>
+                    <Input placeholder="替换/插入" style={{ width: 150 }} onChange={e => { setReplace(e.target.value) }} />
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            try {
+                                setOpt(ipt.replace(new RegExp(search, 'g'), replace));
+                            } catch (e) {
+                                message.error('操作异常');
+                            }
+                        }}>
+                        替换
+                    </Button>
+                    <Button
+                        type="default"
+                        onClick={() => {
+                            try {
+                                let arr = ipt.split('\n');
+                                arr.forEach((item, index) => {
+                                    arr[index] = `${replace}${item}`;
+                                });
+                                setOpt(arr.join('\n'));
+                            } catch (e) {
+                                message.error('操作异常');
+                            }
+                        }}>
+                        行首插入
+                    </Button>
+                    <Button
+                        type="default"
+                        onClick={() => {
+                            try {
+                                setOpt(ipt.replace(/\r\n/g, `${replace}\r\n`));
+                            } catch (e) {
+                                message.error('操作异常');
+                            }
+                        }}>
+                        行尾插入
+                    </Button>
+                    <CopyButton onGetText={() => myEditor.current.getValue()} />
+                    <Popover
+                        content={
+                            <div>
+                                <p>行数：{ipt.split('\r\n').length}</p>
+                                <p>字符数：{ipt.length}</p>
+                                <p>字符数（不计空格）：{ipt.replace(/ +/g, '').length}</p>
+                                <p>空格数：{(ipt.length - ipt.replace(/ +/g, '').length)}</p>
+                                {search != '' && <p>共匹配到 {ipt.split(search).length - 1} 个字符 '{search}'</p>}
+                            </div>
                         }
-                    }}>
-                    合并换行
-                </Button>
-                <label>查找字符：</label>
-                <Input placeholder="查找字符" style={{ width: 150 }} onChange={e => { setSearch(e.target.value) }} />
-                <label>新字符：</label>
-                <Input placeholder="替换/插入" style={{ width: 150 }} onChange={e => { setReplace(e.target.value) }} />
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        try {
-                            setOpt(ipt.replace(new RegExp(search, 'g'), replace));
-                        } catch (e) {
-                            message.error('操作异常');
-                        }
-                    }}>
-                    替换
-                </Button>
-                <Button
-                    type="default"
-                    onClick={() => {
-                        try {
-                            let arr = ipt.split('\n');
-                            arr.forEach((item, index) => {
-                                arr[index] = `${replace}${item}`;
-                            });
-                            setOpt(arr.join('\n'));
-                        } catch (e) {
-                            message.error('操作异常');
-                        }
-                    }}>
-                    行首插入
-                </Button>
-                <Button
-                    type="default"
-                    onClick={() => {
-                        try {
-                            setOpt(ipt.replace(/\r\n/g, `${replace}\r\n`));
-                        } catch (e) {
-                            message.error('操作异常');
-                        }
-                    }}>
-                    行尾插入
-                </Button>
-                <CopyButton onGetText={() => myEditor.current.getValue()} />
-                <Popover
-                    content={
-                        <div>
-                            <p>行数：{ipt.split('\r\n').length}</p>
-                            <p>字符数：{ipt.length}</p>
-                            <p>字符数（不计空格）：{ipt.replace(/ +/g, '').length}</p>
-                            <p>空格数：{(ipt.length - ipt.replace(/ +/g, '').length)}</p>
-                            {search != '' && <p>共匹配到 {ipt.split(search).length - 1} 个字符 '{search}'</p>}
-                        </div>
-                    }
-                    title="统计信息"
-                    open={statisticsOpen}
-                    onOpenChange={setStatisticsOpen}
-                >
-                    <Button type="link">查看统计</Button>
-                </Popover>
-            </Flex>
-        </Flex >
+                        title="统计信息"
+                        open={statisticsOpen}
+                        onOpenChange={setStatisticsOpen}
+                    >
+                        <Button type="link">查看统计</Button>
+                    </Popover>
+                </Flex>
+            </Flex >
+        </PageBox>
     </>
 }
 

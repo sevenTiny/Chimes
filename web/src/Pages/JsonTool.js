@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Tabs, Input, Flex, Button, Card, message, Row, Col, Checkbox, Modal, Form, Popover, InputNumber, Slider } from 'antd';
-import { CopyButton, DescriptionButton } from '../Components/Buttons';
+import { CopyButton, DescriptionButton } from '../CustomComponents';
 import FormItem from 'antd/es/form/FormItem';
 import helper from '../helper';
 import * as monaco from "monaco-editor"
@@ -382,6 +382,11 @@ const JsonEditor = () => {
                                 if (Array.isArray(json)) {
                                     json.forEach(item => {
                                         remove(item);
+                                    })
+
+                                    json.forEach(item => {
+                                        if (item == null || Object.keys(item).length === 0)
+                                            json.splice(json.indexOf(item), 1);
                                     })
                                 }
                                 else if (typeof json === 'object' && json != null) {

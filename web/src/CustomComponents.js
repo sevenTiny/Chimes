@@ -1,4 +1,6 @@
-import { Button, message, Card, Modal } from 'antd';
+import { Button, message, Card, Modal, Typography } from 'antd';
+
+const { Title, Paragraph } = Typography;
 
 const SuccessButton = ({
     title,
@@ -64,4 +66,30 @@ const DescriptionButton = ({
     )
 }
 
-export { SuccessButton, CopyButton, DescriptionButton };
+const PageBox = ({ children }) => {
+    return (
+        <div
+            style={{ paddingTop: 20 }}>
+            {children}
+        </div>
+    )
+}
+
+const DescriptionBox = ({ children }) => {
+    return (
+        <Typography>
+            <Title level={5}>说明</Title>
+            <Paragraph>
+                {children}
+            </Paragraph>
+        </Typography>
+    )
+}
+
+export {
+    SuccessButton,
+    CopyButton,
+    DescriptionButton,
+    PageBox,
+    DescriptionBox
+};

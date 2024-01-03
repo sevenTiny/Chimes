@@ -1,12 +1,13 @@
-import { ToolOutlined, HomeOutlined, LinkOutlined, BuildOutlined, BulbOutlined, EyeOutlined, EnvironmentOutlined, FileTextOutlined } from '@ant-design/icons';
+import { ToolOutlined, HomeOutlined, LinkOutlined, BuildOutlined, BulbOutlined, EyeOutlined, EnvironmentOutlined, FileTextOutlined, CodepenOutlined } from '@ant-design/icons';
 import Home from './Pages/Home';
 import JsonTool from './Pages/JsonTool';
-import GenerateTool from './Pages/GenerateTool';
 import XuanXue from './Pages/XuanXue';
 import Links from './Pages/Links';
-import Diff from './Pages/Diff';
 import About from './Pages/About';
 import TxtEdit from './Pages/TxtTools/TxtEdit';
+import Diff from './Pages/TxtTools/Diff';
+import AbstractAlgorithm from './Pages/Encryption/AbstractAlgorithm';
+import GenerateGuid from './Pages/GenerateTools/GenerateGuid';
 
 const route = [
     {
@@ -27,6 +28,23 @@ const route = [
                 path: "/TxtTools/TxtEdit",
                 element: <TxtEdit />,
             },
+            {
+                label: '对比工具',
+                path: "/TxtTools/Diff",
+                element: <Diff />,
+            },
+        ]
+    },
+    {
+        label: '生成器',
+        path: "/GenerateTools",
+        icon: <BuildOutlined />,
+        children: [
+            {
+                label: 'GUID生成',
+                path: "/GenerateTools/GenerateGuid",
+                element: <GenerateGuid />
+            },
         ]
     },
     {
@@ -36,16 +54,16 @@ const route = [
         icon: <ToolOutlined />,
     },
     {
-        label: '生成器',
-        path: "/GenerateTool",
-        element: <GenerateTool />,
-        icon: <BuildOutlined />,
-    },
-    {
-        label: '对比工具',
-        path: "/Diff",
-        element: <Diff />,
-        icon: <EyeOutlined />,
+        label: '编码/加密',
+        path: "/Encryption",
+        icon: <CodepenOutlined />,
+        children: [
+            {
+                label: '摘要算法',
+                path: "/Encryption/AbstractAlgorithm",
+                element: <AbstractAlgorithm />
+            },
+        ]
     },
     {
         label: '玄学',
